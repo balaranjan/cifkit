@@ -53,6 +53,16 @@ def get_unitcell_coords_for_all_labels(
                 site_label,
             )
         )
+        
+        coords = np.array([p[:3] for p in coords_after_symmetry_operations])
+        coords[coords > 1.0] -= 1.0
+        coords[coords < 0.0] += 1.0
+        
+        for i in range(len(coords_after_symmetry_operations)):
+            label = coords_after_symmetry_operations[i][-1]
+            corrected_coord_w_label = coords[i].tolist() + [label]
+            coords_after_symmetry_operations[i] = corrected_coord_w_label
+        
         coords_list.append(coords_after_symmetry_operations)
     return coords_list
 
