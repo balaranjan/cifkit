@@ -275,37 +275,40 @@ class Cif:
         # Method implementation goes here
         self.unitcell_points = get_supercell_points(self._block, 1)
         self.supercell_points = get_supercell_points(self._block, supercell_size)
-        self.unitcell_points_for_plotting = self._generate_points_for_plotting(self.unitcell_points)
-        self.supercell_points_for_plotting = self._generate_points_for_plotting(self.supercell_points)
+        self.unitcell_points_for_plotting = self._generate_points_for_plotting(
+            self.unitcell_points
+        )
+        self.supercell_points_for_plotting = self._generate_points_for_plotting(
+            self.supercell_points
+        )
         self.unitcell_atom_count = get_cell_atom_count(self.unitcell_points)
         self.supercell_atom_count = get_cell_atom_count(self.supercell_points)
 
     def _generate_points_for_plotting(self, points, tolerance=1e-6):
+        """Generate coordinate points for visualization with boundary
+        handling.
 
-        """Generate coordinate points for visualization with boundary handling.
-    
-            This private helper method processes atom coordinates to ensure atoms
-            at unit cell boundaries appear on all equivalent faces for proper
-            visualization. Atoms with fractional coordinates at 0 or 1 (within
-            tolerance) are duplicated on opposite boundaries.
+        This private helper method processes atom coordinates to ensure atoms
+        at unit cell boundaries appear on all equivalent faces for proper
+        visualization. Atoms with fractional coordinates at 0 or 1 (within
+        tolerance) are duplicated on opposite boundaries.
 
-            Parameters
-            ----------
-            points : list[list[tuple[float, float, float, str]]]
-                List of atom points where each point contains fractional coordinates
-                (x, y, z) and a site label.
-            tolerance : float, default=1e-6
-                Threshold for detecting boundary atoms. Coordinates within this
-                tolerance of 0 or 1 are considered to be at the boundary.
+        Parameters
+        ----------
+        points : list[list[tuple[float, float, float, str]]]
+            List of atom points where each point contains fractional coordinates
+            (x, y, z) and a site label.
+        tolerance : float, default=1e-6
+            Threshold for detecting boundary atoms. Coordinates within this
+            tolerance of 0 or 1 are considered to be at the boundary.
 
-            Returns
-            -------
-            list[list[tuple[float, float, float, str]]]
-                Processed list of points with boundary atoms duplicated. Each point
-                is a tuple containing rounded fractional coordinates and site label.
-                Corner atoms (0,0,0) will appear at all 8 corners, edge atoms on all
-                corresponding edges, and face atoms on all corresponding faces.
-
+        Returns
+        -------
+        list[list[tuple[float, float, float, str]]]
+            Processed list of points with boundary atoms duplicated. Each point
+            is a tuple containing rounded fractional coordinates and site label.
+            Corner atoms (0,0,0) will appear at all 8 corners, edge atoms on all
+            corresponding edges, and face atoms on all corresponding faces.
         """
 
         all_coords = set()
@@ -317,11 +320,11 @@ class Cif:
             x_vals = [new_x, 1.0 - new_x] if abs(new_x) < tolerance else [new_x]
             if abs(new_x - 1.0) < tolerance:
                 x_vals.append(0.0)
-                
+
             y_vals = [new_y, 1.0 - new_y] if abs(new_y) < tolerance else [new_y]
             if abs(new_y - 1.0) < tolerance:
                 y_vals.append(0.0)
-                
+
             z_vals = [new_z, 1.0 - new_z] if abs(new_z) < tolerance else [new_z]
             if abs(new_z - 1.0) < tolerance:
                 z_vals.append(0.0)
@@ -330,7 +333,7 @@ class Cif:
             for dx in x_vals:
                 for dy in y_vals:
                     for dz in z_vals:
-                        coord = ((dx, dy, dz))
+                        coord = (dx, dy, dz)
                         coords_list.append(coord)
 
             for coord in coords_list:
@@ -344,7 +347,6 @@ class Cif:
                 )
 
         return list(all_coords)
-
 
     def compute_connections(self, cutoff_radius=10.0) -> None:
         """Compute onnection network, shortest distances, bond counts,
